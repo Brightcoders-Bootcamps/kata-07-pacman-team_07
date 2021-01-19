@@ -1,6 +1,9 @@
-class Pacman 
+# frozen_string_literal: true
+
+class Pacman
   attr_accessor :position_x, :position_y, :rotation
-  def initialize(position_x, position_y,limit)
+
+  def initialize(position_x, position_y, limit)
     @position_x = position_x
     @position_y = position_y
     @rotation = :up
@@ -10,36 +13,35 @@ class Pacman
   def print_pacman
     case @rotation
     when :up
-      return "V "
+      'V '
     when :left
-      return "> "
+      '> '
     when :right
-      return "< "
+      '< '
     when :down
-      return "^ "
+      '^ '
     end
-
   end
 
   def move_left
     @position_x -= 1
-    @position_x = 0 if @position_x < 0
+    @position_x = 0 if @position_x.negative?
   end
 
   def move_right
-    @position_x += 1 
-    @position_x = @limit[:x] - 1 if @position_x >= @limit[:x] 
+    @position_x += 1
+    @position_x = @limit[:x] - 1 if @position_x >= @limit[:x]
   end
 
   def move_down
     @position_y += 1
 
-    @position_y = @limit[:y] - 1 if @position_y >= @limit[:y] 
+    @position_y = @limit[:y] - 1 if @position_y >= @limit[:y]
   end
 
   def move_up
     @position_y -= 1
-    @position_y = 0 if @position_y < 0
+    @position_y = 0 if @position_y.negative?
   end
 
   def step
@@ -50,9 +52,9 @@ class Pacman
   end
 
   def rotate
-    puts "rotate?: "
+    puts 'rotate?: '
     rotation = gets.chomp.to_sym
-    rotation = [:up, :down, :left, :right].include?(rotation) ? rotation : ""
-    @rotation = rotation if rotation != ""
+    rotation = %i[up down left right].include?(rotation) ? rotation : ''
+    @rotation = rotation if rotation != ''
   end
 end
