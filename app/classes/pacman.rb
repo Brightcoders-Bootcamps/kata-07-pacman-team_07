@@ -51,7 +51,7 @@ class Pacman
 
   def rotate
     puts "rotate?: "
-    rotation = gets.chomp.to_sym
+    rotation = STDIN.gets.chomp.to_sym
     rotation = [:up, :down, :left, :right].include?(rotation) ? rotation : ""
     @rotation = rotation if rotation != ""
   end
