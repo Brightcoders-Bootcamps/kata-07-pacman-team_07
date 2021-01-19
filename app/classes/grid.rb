@@ -1,14 +1,14 @@
 require_relative "pacman"
 class Grid
-  def initialize(size_x, size_y)
-    @size_x = 8
-    @size_y = 8
+  def initialize(size_y, size_x)
+    @size_x = size_x
+    @size_y = size_y
     generate_grid()
   end 
 
   def generate_grid
     @grid = Array.new(@size_y){ Array.new(@size_x){ "." } }
-    @pacman = Pacman.new(4, 4,{y: @size_y, x: @size_x})
+    @pacman = Pacman.new(@size_y/2,@size_x/2,{y: @size_y, x: @size_x})
     @grid[@pacman.position_y][@pacman.position_x] = @pacman
   end
 
