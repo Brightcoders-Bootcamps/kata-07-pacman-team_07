@@ -47,7 +47,7 @@
     <div class="file-time">
       <span class="committed-at">
         
-          Updated <time class='js-timeago' datetime='2021-01-18 19:09:32 -0600'>2021-01-18 19:09:32 -0600</time>
+          Updated <time class='js-timeago' datetime='2021-01-19 19:11:26 -0600'>2021-01-19 19:11:26 -0600</time>
         
       </span>
     </div>
@@ -62,21 +62,21 @@
       <div class="col-md-8">
         <div class="row">
           <div class="col-md-1">
-            <div class="rating a big">
-              A
+            <div class="rating b big">
+              B
             </div>
           </div>
           <div class="code-statistics col-md-11">
             <div class="col-md-3">
-              <div><span class="metric">37</span><small> lines of codes</small></div>
-              <div><span class="metric">4</span><small> methods</small></div>
+              <div><span class="metric">55</span><small> lines of codes</small></div>
+              <div><span class="metric">7</span><small> methods</small></div>
             </div>
             <div class="col-md-3">
-              <div><span class="metric">9.1</span><small> complexity/method</small></div>
-              <div><span class="metric">1</span><small> churn</small></div>
+              <div><span class="metric">8.2</span><small> complexity/method</small></div>
+              <div><span class="metric">4</span><small> churn</small></div>
             </div>
             <div class="col-md-3">
-              <div><span class="metric">36.38</span><small> complexity</small></div>
+              <div><span class="metric">57.56</span><small> complexity</small></div>
               <div><span class="metric">0</span><small> duplications</small></div>
             </div>
           </div>
@@ -88,7 +88,7 @@
             <li><a href="#" id="toggle-code" class="toggle-button button">code</a></li>
             <li class="active">
               <a href="#" id="toggle-smells" class="toggle-button button">
-                3
+                2
                 smells
               </a>
             </li>
@@ -100,25 +100,39 @@
     <code class="prettyprint linenums lang-ruby file-code js-file-code"># frozen_string_literal: true
 
 require_relative &#39;pacman&#39;
-class Grid<ol class="nocode errors smells">  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="https://github.com/troessner/reek/blob/master/docs/Instance-Variable-Assumption.md" target="_blank"><b>InstanceVariableAssumption</b></a>        </span>      </div>      <span>Grid assumes too much for instance variable '@grid'</span>          </div>  </li>  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="https://github.com/troessner/reek/blob/master/docs/Instance-Variable-Assumption.md" target="_blank"><b>InstanceVariableAssumption</b></a>        </span>      </div>      <span>Grid assumes too much for instance variable '@pacman'</span>          </div>  </li>  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="https://github.com/troessner/reek/blob/master/docs/Irresponsible-Module.md" target="_blank"><b>IrresponsibleModule</b></a>        </span>      </div>      <span>Grid has no descriptive comment</span>          </div>  </li></ol>
-  def initialize(_size_x, _size_y)
-    @size_x = 8
-    @size_y = 8
+# frozen_string_literal: true
+
+#
+#   Class used to control the game
+class Grid<ol class="nocode errors smells">  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="https://github.com/troessner/reek/blob/master/docs/Instance-Variable-Assumption.md" target="_blank"><b>InstanceVariableAssumption</b></a>        </span>      </div>      <span>Grid assumes too much for instance variable '@grid'</span>          </div>  </li>  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="https://github.com/troessner/reek/blob/master/docs/Instance-Variable-Assumption.md" target="_blank"><b>InstanceVariableAssumption</b></a>        </span>      </div>      <span>Grid assumes too much for instance variable '@pacman'</span>          </div>  </li></ol>
+  attr_reader :size_y, :size_x
+
+  def initialize(size_y, size_x)
+    @size_x = size_x
+    @size_y = size_y
     generate_grid
   end
 
   def generate_grid
     @grid = Array.new(@size_y) { Array.new(@size_x) { &#39;.&#39; } }
-    @pacman = Pacman.new(4, 4, { y: @size_y, x: @size_x })
+    @pacman = Pacman.new(@size_y / 2, @size_x / 2, { y: @size_y, x: @size_x })
     @grid[@pacman.position_y][@pacman.position_x] = @pacman
+    create_walls
+  end
+
+  def create_walls
+    0.upto(@size_x * @size_y / 8) { |_el| random_wall(&#39;|&#39;) }
+    0.upto(@size_x * @size_y / 5) { |_el| random_wall(&#39;-&#39;) }
+  end
+
+  def random_wall(wall)
+    @grid[rand(0..@size_y - 1)][rand(0..@size_x - 1)] = wall
   end
 
   def print_grid
     @grid.each do |row|
       puts &#39;&#39;
-      row.each do |col|
-        print col.is_a?(Pacman) ? col.print_pacman : &quot;#{col} &quot;
-      end
+      row.each { |col| print col.is_a?(Pacman) ? col.print_pacman : &quot;#{col} &quot; }
     end
     puts &#39;&#39;
   end
@@ -126,12 +140,16 @@ class Grid<ol class="nocode errors smells">  <li>    <div class="description">  
   def tick
     loop do
       system(&#39;clear&#39;)
-      @grid[@pacman.position_y][@pacman.position_x] = &#39; &#39;
-      @pacman.step
-      @grid[@pacman.position_y][@pacman.position_x] = @pacman
-      print_grid
-      @pacman.rotate
+      reubicate_pacman
     end
+  end
+
+  def reubicate_pacman
+    @grid[@pacman.position_y][@pacman.position_x] = &#39; &#39;
+    @pacman.step(@grid)
+    @grid[@pacman.position_y][@pacman.position_x] = @pacman
+    print_grid
+    @pacman.rotate(@grid)
   end
 end
 </code>

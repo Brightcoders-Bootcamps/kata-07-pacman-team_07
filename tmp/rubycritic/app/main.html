@@ -47,7 +47,7 @@
     <div class="file-time">
       <span class="committed-at">
         
-          Updated <time class='js-timeago' datetime='2021-01-18 19:09:32 -0600'>2021-01-18 19:09:32 -0600</time>
+          Updated <time class='js-timeago' datetime='2021-01-18 19:59:30 -0600'>2021-01-18 19:59:30 -0600</time>
         
       </span>
     </div>
@@ -68,15 +68,15 @@
           </div>
           <div class="code-statistics col-md-11">
             <div class="col-md-3">
-              <div><span class="metric">5</span><small> lines of codes</small></div>
-              <div><span class="metric">0</span><small> methods</small></div>
+              <div><span class="metric">22</span><small> lines of codes</small></div>
+              <div><span class="metric">1</span><small> methods</small></div>
             </div>
             <div class="col-md-3">
-              <div><span class="metric">N/A</span><small> complexity/method</small></div>
-              <div><span class="metric">1</span><small> churn</small></div>
+              <div><span class="metric">1.6</span><small> complexity/method</small></div>
+              <div><span class="metric">2</span><small> churn</small></div>
             </div>
             <div class="col-md-3">
-              <div><span class="metric">0.0</span><small> complexity</small></div>
+              <div><span class="metric">1.56</span><small> complexity</small></div>
               <div><span class="metric">0</span><small> duplications</small></div>
             </div>
           </div>
@@ -97,11 +97,28 @@
       </div>
     </div>
 
-    <code class="prettyprint linenums lang-ruby file-code js-file-code">require_relative &quot;./classes/grid&quot;
+    <code class="prettyprint linenums lang-ruby file-code js-file-code"># frozen_string_literal: true
 
-grid = Grid.new(8, 8)
-grid.print_grid()
-grid.tick   
+require_relative &#39;./classes/grid&#39;
+
+def help
+  help = %(
+  usage: ruby main.rb &lt;y_size&gt; &lt;x_size&gt;
+  use only Integers greater than 0)
+  puts help
+end
+
+args = ARGV.map(&amp;:to_i)
+bad = false
+args.each { |arg| bad = true if arg.class != Integer || arg.zero? }
+if args.length &gt; 2 || args.length &lt; 2 || bad
+  help
+else
+  args.each { |arg| puts arg }
+  grid = Grid.new(args[0], args[1])
+  grid.print_grid
+  grid.tick
+end
 </code>
   </div>
 </div>
