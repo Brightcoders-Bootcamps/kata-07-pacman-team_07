@@ -1,25 +1,27 @@
 # frozen_string_literal: true
 
 require_relative 'pacman'
+# frozen_string_literal: true
+
+#
+#   Class used to control the game
 class Grid
-  def initialize(_size_x, _size_y)
-    @size_x = 8
-    @size_y = 8
+  def initialize(size_y, size_x)
+    @size_x = size_x
+    @size_y = size_y
     generate_grid
   end
 
   def generate_grid
     @grid = Array.new(@size_y) { Array.new(@size_x) { '.' } }
-    @pacman = Pacman.new(4, 4, { y: @size_y, x: @size_x })
+    @pacman = Pacman.new(@size_y / 2, @size_x / 2, { y: @size_y, x: @size_x })
     @grid[@pacman.position_y][@pacman.position_x] = @pacman
   end
 
   def print_grid
     @grid.each do |row|
       puts ''
-      row.each do |col|
-        print col.is_a?(Pacman) ? col.print_pacman : "#{col} "
-      end
+      row.each { |col|print col.is_a?(Pacman) ? col.print_pacman : "#{col} "}
     end
     puts ''
   end
@@ -27,11 +29,15 @@ class Grid
   def tick
     loop do
       system('clear')
-      @grid[@pacman.position_y][@pacman.position_x] = ' '
-      @pacman.step
-      @grid[@pacman.position_y][@pacman.position_x] = @pacman
-      print_grid
-      @pacman.rotate
+      reubicate_pacman()
     end
+  end
+
+  def reubicate_pacman
+    @grid[@pacman.position_y][@pacman.position_x] = ' '
+    @pacman.step
+    @grid[@pacman.position_y][@pacman.position_x] = @pacman
+    @pacman.rotate
+    print_grid
   end
 end

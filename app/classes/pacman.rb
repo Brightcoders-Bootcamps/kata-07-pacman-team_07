@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+#
+#   Class used to control a Pacman
 class Pacman
-  attr_accessor :position_x, :position_y, :rotation
+  attr_reader :position_x, :position_y, :rotation
 
   def initialize(position_x, position_y, limit)
     @position_x = position_x
@@ -11,16 +13,7 @@ class Pacman
   end
 
   def print_pacman
-    case @rotation
-    when :up
-      'V '
-    when :left
-      '> '
-    when :right
-      '< '
-    when :down
-      '^ '
-    end
+    { up: 'V ', left: '> ', right: '< ', down: '^ ' }[@rotation]
   end
 
   def move_left
@@ -35,8 +28,8 @@ class Pacman
 
   def move_down
     @position_y += 1
-
-    @position_y = @limit[:y] - 1 if @position_y >= @limit[:y]
+    condition = @position_y >= @limit[:y]
+    @position_y = @limit[:y] - 1 if condition
   end
 
   def move_up
@@ -53,8 +46,17 @@ class Pacman
 
   def rotate
     puts 'rotate?: '
-    rotation = gets.chomp.to_sym
+    rotation = $stdin.gets.chomp.to_sym
     rotation = %i[up down left right].include?(rotation) ? rotation : ''
+    rotation = '' if close_wall?(rotation) == true
     @rotation = rotation if rotation != ''
+  end
+
+  def close_wall?(rotation)
+    right_wall = @position_x + 1 == @limit[:x]
+    left_wall = @position_x - 1 == -1
+    up_wall = @position_y - 1 == -1
+    down_wall = @position_y + 1 == @limit[:y]
+    { up: up_wall, down: down_wall, left: left_wall, right: right_wall }[rotation]
   end
 end
