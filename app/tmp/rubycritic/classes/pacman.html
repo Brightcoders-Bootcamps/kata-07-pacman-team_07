@@ -68,15 +68,15 @@
           </div>
           <div class="code-statistics col-md-11">
             <div class="col-md-3">
-              <div><span class="metric">62</span><small> lines of codes</small></div>
-              <div><span class="metric">9</span><small> methods</small></div>
+              <div><span class="metric">65</span><small> lines of codes</small></div>
+              <div><span class="metric">8</span><small> methods</small></div>
             </div>
             <div class="col-md-3">
-              <div><span class="metric">6.5</span><small> complexity/method</small></div>
+              <div><span class="metric">7.5</span><small> complexity/method</small></div>
               <div><span class="metric">0</span><small> churn</small></div>
             </div>
             <div class="col-md-3">
-              <div><span class="metric">58.89</span><small> complexity</small></div>
+              <div><span class="metric">59.65</span><small> complexity</small></div>
               <div><span class="metric">0</span><small> duplications</small></div>
             </div>
           </div>
@@ -99,6 +99,9 @@
 
     <code class="prettyprint linenums lang-ruby file-code js-file-code"># frozen_string_literal: true
 
+require_relative &#39;rules&#39;
+# frozen_string_literal: true
+
 #
 #   Class used to control a Pacman
 class Pacman
@@ -115,48 +118,48 @@ class Pacman
     { up: &#39;V &#39;, left: &#39;&gt; &#39;, right: &#39;&lt; &#39;, down: &#39;^ &#39; }[@rotation]
   end
 
-  def move_left
+  def move_left(grid)
+    return false if Rules.wall?(grid, @position_x - 1, @position_y)
+
     @position_x -= 1
     @position_x = 0 if @position_x.negative?
   end
 
-  def move_right
+  def move_right(grid)
+    return false if Rules.wall?(grid, @position_x + 1, @position_y)
+
     @position_x += 1
     @position_x = @limit[:x] - 1 if @position_x &gt;= @limit[:x]
   end
 
-  def move_down
+  def move_down(grid)
+    return false if Rules.wall?(grid, @position_x, @position_y + 1)
+
     @position_y += 1
     condition = @position_y &gt;= @limit[:y]
     @position_y = @limit[:y] - 1 if condition
   end
 
-  def move_up
+  def move_up(grid)
+    return false if Rules.wall?(grid, @position_x, @position_y - 1)
+
     @position_y -= 1
     @position_y = 0 if @position_y.negative?
   end
 
-  def step
-    move_up if @rotation == :up
-    move_down if @rotation == :down
-    move_right if @rotation == :right
-    move_left if @rotation == :left
+  def step(grid)
+    move_up(grid) if @rotation == :up
+    move_down(grid) if @rotation == :down
+    move_right(grid) if @rotation == :right
+    move_left(grid) if @rotation == :left
   end
 
-  def rotate
+  def rotate(grid)
     puts &#39;rotate?: &#39;
     rotation = $stdin.gets.chomp.to_sym
     rotation = %i[up down left right].include?(rotation) ? rotation : &#39;&#39;
-    rotation = &#39;&#39; if close_wall?(rotation) == true
+    rotation = &#39;&#39; if Rules.close_wall?(grid, rotation, @position_x, @position_y, @limit) == true
     @rotation = rotation if rotation != &#39;&#39;
-  end
-
-  def close_wall?(rotation)
-    right_wall = @position_x + 1 == @limit[:x]
-    left_wall = @position_x - 1 == -1
-    up_wall = @position_y - 1 == -1
-    down_wall = @position_y + 1 == @limit[:y]
-    { up: up_wall, down: down_wall, left: left_wall, right: right_wall }[rotation]
   end
 end
 </code>

@@ -52,7 +52,7 @@
       </span>
     </div>
     <div>
-      <h3><small>classes /</small> grid.rb</h3>
+      <h3><small>classes /</small> rules.rb</h3>
     </div>
   </div>
   <!--End Page Title -->
@@ -62,21 +62,21 @@
       <div class="col-md-8">
         <div class="row">
           <div class="col-md-1">
-            <div class="rating b big">
-              B
+            <div class="rating a big">
+              A
             </div>
           </div>
           <div class="code-statistics col-md-11">
             <div class="col-md-3">
-              <div><span class="metric">55</span><small> lines of codes</small></div>
-              <div><span class="metric">7</span><small> methods</small></div>
+              <div><span class="metric">20</span><small> lines of codes</small></div>
+              <div><span class="metric">2</span><small> methods</small></div>
             </div>
             <div class="col-md-3">
-              <div><span class="metric">8.2</span><small> complexity/method</small></div>
+              <div><span class="metric">16.1</span><small> complexity/method</small></div>
               <div><span class="metric">0</span><small> churn</small></div>
             </div>
             <div class="col-md-3">
-              <div><span class="metric">57.56</span><small> complexity</small></div>
+              <div><span class="metric">32.26</span><small> complexity</small></div>
               <div><span class="metric">0</span><small> duplications</small></div>
             </div>
           </div>
@@ -99,57 +99,22 @@
 
     <code class="prettyprint linenums lang-ruby file-code js-file-code"># frozen_string_literal: true
 
-require_relative &#39;pacman&#39;
-# frozen_string_literal: true
-
 #
-#   Class used to control the game
-class Grid<ol class="nocode errors smells">  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="https://github.com/troessner/reek/blob/master/docs/Instance-Variable-Assumption.md" target="_blank"><b>InstanceVariableAssumption</b></a>        </span>      </div>      <span>Grid assumes too much for instance variable '@grid'</span>          </div>  </li>  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="https://github.com/troessner/reek/blob/master/docs/Instance-Variable-Assumption.md" target="_blank"><b>InstanceVariableAssumption</b></a>        </span>      </div>      <span>Grid assumes too much for instance variable '@pacman'</span>          </div>  </li></ol>
-  attr_reader :size_y, :size_x
-
-  def initialize(size_y, size_x)
-    @size_x = size_x
-    @size_y = size_y
-    generate_grid
+# Class to control the rules of walls
+class Rules
+  def self.close_wall?(grid, rotation, position_x, position_y, limit)<ol class="nocode errors smells">  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="http://docs.seattlerb.org/flog/" target="_blank"><b>HighComplexity</b></a>        </span>      </div>      <span>Rules::close_wall? has a flog score of 26</span>          </div>  </li>  <li>    <div class="description">      <div class="heading">        <span>          <i class="fa fa-warning" aria-hidden="true"></i>          <a href="https://github.com/troessner/reek/blob/master/docs/Long-Parameter-List.md" target="_blank"><b>LongParameterList</b></a>        </span>      </div>      <span>Rules#self.close_wall? has 5 parameters</span>          </div>  </li></ol>
+    right_wall = position_x + 1 == limit[:x] || Rules.wall?(grid, position_x + 1, position_y)
+    left_wall = position_x - 1 == -1 || Rules.wall?(grid, position_x - 1, position_y)
+    up_wall = position_y - 1 == -1 || Rules.wall?(grid, position_x, position_y - 1)
+    down_wall = position_y + 1 == limit[:y] || Rules.wall?(grid, position_x, position_y + 1)
+    { up: up_wall, down: down_wall, left: left_wall, right: right_wall }[rotation]
   end
 
-  def generate_grid
-    @grid = Array.new(@size_y) { Array.new(@size_x) { &#39;.&#39; } }
-    @pacman = Pacman.new(@size_y / 2, @size_x / 2, { y: @size_y, x: @size_x })
-    @grid[@pacman.position_y][@pacman.position_x] = @pacman
-    create_walls
-  end
+  def self.wall?(grid, position_x, position_y)
+    return false if position_y == grid.size
 
-  def create_walls
-    0.upto(@size_x * @size_y / 8) { |_el| random_wall(&#39;|&#39;) }
-    0.upto(@size_x * @size_y / 5) { |_el| random_wall(&#39;-&#39;) }
-  end
-
-  def random_wall(wall)
-    @grid[rand(0..@size_y - 1)][rand(0..@size_x - 1)] = wall
-  end
-
-  def print_grid
-    @grid.each do |row|
-      puts &#39;&#39;
-      row.each { |col| print col.is_a?(Pacman) ? col.print_pacman : &quot;#{col} &quot; }
-    end
-    puts &#39;&#39;
-  end
-
-  def tick
-    loop do
-      system(&#39;clear&#39;)
-      reubicate_pacman
-    end
-  end
-
-  def reubicate_pacman
-    @grid[@pacman.position_y][@pacman.position_x] = &#39; &#39;
-    @pacman.step(@grid)
-    @grid[@pacman.position_y][@pacman.position_x] = @pacman
-    print_grid
-    @pacman.rotate(@grid)
+    position = grid[position_y][position_x]
+    [&#39;|&#39;, &#39;-&#39;].include?(position) ? true : false
   end
 end
 </code>

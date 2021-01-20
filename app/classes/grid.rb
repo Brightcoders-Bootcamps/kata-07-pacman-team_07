@@ -6,6 +6,8 @@ require_relative 'pacman'
 #
 #   Class used to control the game
 class Grid
+  attr_reader :size_y, :size_x
+
   def initialize(size_y, size_x)
     @size_x = size_x
     @size_y = size_y
@@ -14,20 +16,24 @@ class Grid
 
   def generate_grid
     @grid = Array.new(@size_y) { Array.new(@size_x) { '.' } }
-    @pacman = Pacman.new(@size_y / 2, @size_x / 2, { y: @size_y, x: @size_x }, @grid)
+    @pacman = Pacman.new(@size_y / 2, @size_x / 2, { y: @size_y, x: @size_x })
     @grid[@pacman.position_y][@pacman.position_x] = @pacman
-    create_walls()
+    create_walls
   end
 
   def create_walls
-    0.upto(@size_x * @size_y / 8) { |el| @grid[rand(0..@size_y-1)][rand(0..@size_x-1)] = "|"}
-    0.upto(@size_x * @size_y / 5) { |el| @grid[rand(0..@size_y-1)][rand(0..@size_x-1)] = "-"}
+    0.upto(@size_x * @size_y / 8) { |_el| random_wall('|') }
+    0.upto(@size_x * @size_y / 5) { |_el| random_wall('-') }
+  end
+
+  def random_wall(wall)
+    @grid[rand(0..@size_y - 1)][rand(0..@size_x - 1)] = wall
   end
 
   def print_grid
     @grid.each do |row|
       puts ''
-      row.each { |col|print col.is_a?(Pacman) ? col.print_pacman : "#{col} "}
+      row.each { |col| print col.is_a?(Pacman) ? col.print_pacman : "#{col} " }
     end
     puts ''
   end
@@ -35,16 +41,15 @@ class Grid
   def tick
     loop do
       system('clear')
-      reubicate_pacman()
+      reubicate_pacman
     end
   end
 
   def reubicate_pacman
     @grid[@pacman.position_y][@pacman.position_x] = ' '
-    @pacman.step
+    @pacman.step(@grid)
     @grid[@pacman.position_y][@pacman.position_x] = @pacman
     print_grid
-    @pacman.rotate
+    @pacman.rotate(@grid)
   end
-
 end
