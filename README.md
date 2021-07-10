@@ -1,3 +1,11 @@
+> App score
+>
+> ![appscore](app/badges/rubycritic_badge_score.svg)
+>
+> Test score
+>
+>![testscore](spec/badges/rubycritic_badge_score.svg)
+
 ![BrightCoders Logo](img/logo-bc.png)
 
 # PacMan Kata
